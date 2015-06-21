@@ -27,11 +27,10 @@ mainLoop c0 fs θref = do
     let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
-    print nextθ
     setTimeout 60 (mainLoop c0 fs θref)
 
 fourier :: Fourier
-fourier = [((-1)^(n+1))/ fromIntegral n | n <- [1..10]]
+fourier = [if even n then 0 else 1/fromIntegral n | n <- [1..50]]
 dθ :: Angle
 dθ = 0.05
 radius :: Double
@@ -47,6 +46,7 @@ blue :: Color
 blue = RGB 0 0 250
 
 main = do
+    print $ fourier
     Just canv0 <- getCanvasById "canv"
     θref <- newIORef 1
     mainLoop canv0 fourier θref
