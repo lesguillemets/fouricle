@@ -16,7 +16,8 @@ drawCurrent c0 fs graph θ = do
         renderOnTop c0 . toCenter . stroke $ circle (nx,ny) (abs a)
         renderOnTop c0 . toCenter . color blue . stroke $ line (nx,ny) (nx+dx,ny+dy)
         modifyIORef' p (\(x,y) -> (x+dx, y+dy))
-    return ()
+    (x,y) <- readIORef p
+    renderOnTop c0 . toCenter . color red . stroke $ line (x,y) (750,y)
 
 mainLoop :: Canvas -> Fourier -> IORef Angle -> IO ()
 mainLoop c0 fs θref = do
@@ -44,6 +45,8 @@ centerPoint = (fromIntegral $ width `div` 2 , fromIntegral $ height `div` 2)
 toCenter :: Picture () -> Picture ()
 toCenter = translate centerPoint
 
+red :: Color
+red = RGBA 250 0 0 0.6
 blue :: Color
 blue = RGB 0 0 250
 
