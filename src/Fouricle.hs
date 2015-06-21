@@ -11,11 +11,10 @@ drawCurrent c0 fs graph θ = do
     render c0 . stroke $ circle (0,0) 0
     forM_ (zip [1..] (map (*radius) fs)) $ \ (n,a) -> do
         (nx,ny) <- readIORef p
-        let θ' = if a < 0 then θ+pi else θ
         let dx = a * cos (n*θ)
             dy = a * sin (n*θ)
-        renderOnTop c0 . translate centerPoint . stroke $ circle (nx,ny) (abs a)
-        renderOnTop c0 . translate centerPoint . color blue . stroke $ line (nx,ny) (nx+dx,ny+dy)
+        renderOnTop c0 . toCenter . stroke $ circle (nx,ny) (abs a)
+        renderOnTop c0 . toCenter . color blue . stroke $ line (nx,ny) (nx+dx,ny+dy)
         modifyIORef' p (\(x,y) -> (x+dx, y+dy))
     return ()
 
@@ -41,6 +40,9 @@ height :: Int
 height = 500
 centerPoint :: Point
 centerPoint = (fromIntegral $ width `div` 2 , fromIntegral $ height `div` 2)
+
+toCenter :: Picture () -> Picture ()
+toCenter = translate centerPoint
 
 blue :: Color
 blue = RGB 0 0 250
