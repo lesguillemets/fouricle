@@ -1,3 +1,8 @@
+div.container{
+    display: block;
+}
+
 canvas {
-    border:1px solid black
+    border: 1px solid black;
+    position: absolute;
 }
