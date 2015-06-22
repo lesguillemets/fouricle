@@ -14,9 +14,18 @@ red :: Color
 red = RGBA 250 0 0 0.6
 blue :: Color
 blue = RGB 0 0 250
+green :: Color
+green = RGBA 0 250 0 0.6
 
 barLength :: Int
-barLength = 750
+barLength = 550
 
 stepTime :: Int
 stepTime = 60
+
+graphWidth :: Int
+graphWidth = 250
+dw :: Int
+dw = 2
+pointSize :: Double
+pointSize = 5.0

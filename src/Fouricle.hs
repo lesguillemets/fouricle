@@ -1,4 +1,5 @@
 import Control.Monad
+import Control.Applicative
 import Data.IORef
 import Haste
 import Haste.DOM
@@ -10,6 +11,7 @@ type Fourier = [Double]
 drawCurrent :: Canvas -> Canvas ->
                 Fourier -> IORef (Picture ()) -> Angle -> IO ()
 drawCurrent c0 c1 fs graph θ = do
+    -- draw c0
     p <- newIORef ((0,0) :: Point)
     refresh c0
     forM_ (zip [1..] (map (*radius) fs)) $ \ (n,a) -> do
@@ -22,6 +24,11 @@ drawCurrent c0 c1 fs graph θ = do
     (x,y) <- readIORef p
     renderOnTop c0 . toCenter . color red . stroke $
             line (x,y) (fromIntegral $ barLength-width `div` 2,y)
+    -- c1
+    Just canv <- elemById "canv1"
+    prevGraph <- loadBitmap canv
+    render c1 $ draw prevGraph (0, 0)
+    renderOnTop c1 . toOrigin . color green . fill $ circle (0,y) pointSize
 
 mainLoop :: Canvas -> Canvas -> Fourier -> IORef Angle -> IO ()
 mainLoop c0 c1 fs θref = do
@@ -44,6 +51,10 @@ centerPoint = (fromIntegral $ width `div` 2 , fromIntegral $ height `div` 2)
 
 toCenter :: Picture () -> Picture ()
 toCenter = translate centerPoint
+graphOrigin :: Point
+graphOrigin = (fromIntegral barLength, fromIntegral $ height `div` 2)
+toOrigin :: Picture ()  -> Picture ()
+toOrigin = translate graphOrigin
 
 main = do
     print $ fourier
