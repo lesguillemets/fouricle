@@ -26,6 +26,6 @@ stepTime = 30
 graphWidth :: Int
 graphWidth = 250
 dw :: Int
-dw = 2
+dw = 1
 pointSize :: Double
 pointSize = 1.0
