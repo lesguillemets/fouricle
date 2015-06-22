@@ -3,12 +3,15 @@ import Data.IORef
 import Haste
 import Haste.DOM
 import Haste.Graphics.Canvas
+
+import Consts
 type Fourier = [Double]
 
-drawCurrent :: Canvas -> Fourier -> IORef (Picture ()) -> Angle -> IO ()
-drawCurrent c0 fs graph θ = do
+drawCurrent :: Canvas -> Canvas ->
+                Fourier -> IORef (Picture ()) -> Angle -> IO ()
+drawCurrent c0 c1 fs graph θ = do
     p <- newIORef ((0,0) :: Point)
-    render c0 . stroke $ circle (0,0) 0
+    refresh c0
     forM_ (zip [1..] (map (*radius) fs)) $ \ (n,a) -> do
         (nx,ny) <- readIORef p
         let dx = a * cos (n*θ)
@@ -17,41 +20,34 @@ drawCurrent c0 fs graph θ = do
         renderOnTop c0 . toCenter . color blue . stroke $ line (nx,ny) (nx+dx,ny+dy)
         modifyIORef' p (\(x,y) -> (x+dx, y+dy))
     (x,y) <- readIORef p
-    renderOnTop c0 . toCenter . color red . stroke $ line (x,y) (750,y)
+    renderOnTop c0 . toCenter . color red . stroke $
+            line (x,y) (fromIntegral $ barLength-width `div` 2,y)
 
-mainLoop :: Canvas -> Fourier -> IORef Angle -> IO ()
-mainLoop c0 fs θref = do
+mainLoop :: Canvas -> Canvas -> Fourier -> IORef Angle -> IO ()
+mainLoop c0 c1 fs θref = do
     θ <- readIORef θref
     graph <- newIORef (stroke $ rect (0,0) (0,0))
-    drawCurrent c0 fs graph θ
+    drawCurrent c0 c1 fs graph θ
     let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
-    setTimeout 60 (mainLoop c0 fs θref)
+    setTimeout stepTime (mainLoop c0 c1 fs θref)
+
+refresh :: Canvas -> IO ()
+refresh c = render c . stroke $ circle (0,0) 0
 
 fourier :: Fourier
 fourier = [if even n then 0 else 1/fromIntegral n | n <- [1..50]]
-dθ :: Angle
-dθ = 0.05
-radius :: Double
-radius = 100
-width :: Int
-width = 500
-height :: Int
-height = 500
+
 centerPoint :: Point
 centerPoint = (fromIntegral $ width `div` 2 , fromIntegral $ height `div` 2)
 
 toCenter :: Picture () -> Picture ()
 toCenter = translate centerPoint
 
-red :: Color
-red = RGBA 250 0 0 0.6
-blue :: Color
-blue = RGB 0 0 250
-
 main = do
     print $ fourier
     Just canv0 <- getCanvasById "canv0"
+    Just canv1 <- getCanvasById "canv1"
     θref <- newIORef 1
-    mainLoop canv0 fourier θref
+    mainLoop canv0 canv1 fourier θref
