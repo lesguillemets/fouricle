@@ -2,7 +2,7 @@ module Consts where
 import Haste.Graphics.Canvas
 
 dθ :: Angle
-dθ = 0.05
+dθ = 0.02
 radius :: Double
 radius = 100
 width :: Int
@@ -21,11 +21,11 @@ barLength :: Int
 barLength = 550
 
 stepTime :: Int
-stepTime = 60
+stepTime = 30
 
 graphWidth :: Int
 graphWidth = 250
 dw :: Int
 dw = 2
 pointSize :: Double
-pointSize = 2.0
+pointSize = 1.0

@@ -27,9 +27,6 @@ drawCurrent c0 c1 fs graph θ = do
     renderOnTop c0 . toCenter . color red . stroke $
             line (x,y) (fromIntegral $ barLength-width `div` 2,y)
     -- c1
-    Just canv <- elemById "canv1"
-    prevGraph <- loadBitmap canv
---     render c1 $ draw prevGraph (0, 0)
     shiftPrevious c1 (fromIntegral dw)
     renderOnTop c1 . toOrigin . color green . fill $ circle (0,y) pointSize
 
