@@ -52,6 +52,6 @@ blue = RGB 0 0 250
 
 main = do
     print $ fourier
-    Just canv0 <- getCanvasById "canv"
+    Just canv0 <- getCanvasById "canv0"
     θref <- newIORef 1
     mainLoop canv0 fourier θref
