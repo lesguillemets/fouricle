@@ -5,6 +5,7 @@ import Haste
 import Haste.DOM
 import Haste.Graphics.Canvas
 import Haste.Foreign
+import Haste.Prim (toJSStr)
 
 import Consts
 type Fourier = [Double]
@@ -29,7 +30,7 @@ drawCurrent c0 c1 fs graph θ = do
     Just canv <- elemById "canv1"
     prevGraph <- loadBitmap canv
 --     render c1 $ draw prevGraph (0, 0)
-    shiftPrevious c0 (fromIntegral dw)
+    shiftPrevious c1 (fromIntegral dw)
     renderOnTop c1 . toOrigin . color green . fill $ circle (0,y) pointSize
 
 mainLoop :: Canvas -> Canvas -> Fourier -> IORef Angle -> IO ()
@@ -59,13 +60,21 @@ toOrigin :: Picture ()  -> Picture ()
 toOrigin = translate graphOrigin
 
 shiftPrevious :: Canvas -> Double -> IO ()
-shiftPrevious c dx = ffi $ toJSString
-    "(function(c,dx){c.getContext('2d').drawImage(c,dx,0);})"
+-- TODO : nicer implementation
+shiftPrevious = ffi . toJSString . unwords $
+        [
+        "(function(c,dx){",
+            "var buf = document.createElement('canvas');",
+            "buf.width = c.width; buf.height=c.height;",
+            "buf.getContext('2d').drawImage(c,0,0);",
+            "c.width = c.width;",
+            "c.getContext('2d').drawImage(buf,dx,0);",
+        "})"
+        ]
 
 main = do
     print $ fourier
     Just canv0 <- getCanvasById "canv0"
     Just canv1 <- getCanvasById "canv1"
-    render canv1 . fill $ circle (0,0) 40
     θref <- newIORef 1
     mainLoop canv0 canv1 fourier θref

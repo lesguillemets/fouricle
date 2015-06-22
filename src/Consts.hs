@@ -28,4 +28,4 @@ graphWidth = 250
 dw :: Int
 dw = 2
 pointSize :: Double
-pointSize = 5.0
+pointSize = 2.0
