@@ -8,6 +8,7 @@ import Haste.Graphics.Canvas
 import Haste.Foreign
 
 import Consts
+import Fouriers
 
 drawCurrent :: Canvas -> Canvas -> Fourier -> Angle -> IO ()
 drawCurrent c0 c1 fs θ = do

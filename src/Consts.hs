@@ -1,6 +1,5 @@
 module Consts where
 import Haste.Graphics.Canvas
-import qualified Data.Map as M
 
 defaultdθ :: Angle
 defaultdθ = 0.02
@@ -30,25 +29,3 @@ dw :: Int
 dw = 1
 pointSize :: Double
 pointSize = 1.0
-
-type Fourier = [Double]
-rectWave :: Fourier
-rectWave = [if even n then 0 else 1/fromIntegral n | n <- [1..]::[Int]]
-
-triangularWave :: Fourier
-triangularWave = [
-                 if even n
-                     then 0
-                     else 1/fromIntegral ((-1)^(n`div`2)*n^2) |
-                     n <- [1..]::[Int]
-                ]
-
-sawToothWave :: Fourier
-sawToothWave = [1 / fromIntegral n | n <- [1..]::[Int]]
-
-fouriers :: M.Map String Fourier
-fouriers = M.fromList [
-                      ("rectangular", rectWave),
-                      ("triangular", triangularWave),
-                      ("sawTooth", sawToothWave)
-                      ]
