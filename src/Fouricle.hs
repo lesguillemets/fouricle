@@ -30,15 +30,17 @@ drawCurrent c0 c1 fs θ = do
     shiftPrevious c1 (fromIntegral dw)
     renderOnTop c1 . toOrigin . color green . fill $ circle (0,y) pointSize
 
-mainLoop :: Canvas -> Canvas -> IORef Fourier -> IORef Angle -> IO ()
-mainLoop c0 c1 fsRef θref = do
+mainLoop :: Canvas -> Canvas -> IORef Angle -> IORef Fourier ->
+            IORef Angle -> IO ()
+mainLoop c0 c1 dθref fsRef θref = do
     fs <- readIORef fsRef
     θ <- readIORef θref
     drawCurrent c0 c1 fs θ
-    let θ' = θ + dθ
+    dθ' <- readIORef dθref
+    let θ' = θ + dθ'
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
-    setTimeout stepTime (mainLoop c0 c1 fsRef θref)
+    setTimeout stepTime (mainLoop c0 c1 dθref fsRef θref)
 
 refresh :: Canvas -> IO ()
 refresh c = render c . stroke $ circle (0,0) 0
@@ -74,19 +76,25 @@ setFs fsRef = do
     n <- read <$> getProp nth "value"
     writeIORef fsRef . take n $ fouriers M.! sName
 
-setUp :: IORef Fourier -> IO ()
-setUp fsRef = do
+setUp :: IORef Fourier -> IORef Angle -> IO ()
+setUp fsRef dθref = do
     Just series <- elemById "series"
     Just nth <- elemById "nth"
     setFs fsRef
     _ <- onEvent series OnChange (setFs fsRef)
     _ <- onEvent nth OnChange  (setFs fsRef)
+    Just speed <- elemById "speed"
+    newdθ <- (*dθ) . read <$> getProp speed "value"
+    _ <- onEvent speed OnChange $ do
+        newdθ <- (*dθ) . read <$> getProp speed "value"
+        writeIORef dθref newdθ
     return ()
 
 main = do
     θref <- newIORef 1
     fsRef <- newIORef []
-    setUp fsRef
+    dθref <- newIORef dθ
+    setUp fsRef dθref
     Just canv0 <- getCanvasById "canv0"
     Just canv1 <- getCanvasById "canv1"
-    mainLoop canv0 canv1 fsRef θref
+    mainLoop canv0 canv1 dθref fsRef θref
