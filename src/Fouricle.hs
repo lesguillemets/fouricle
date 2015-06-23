@@ -1,6 +1,7 @@
 import Control.Monad
 import Control.Applicative
 import Data.IORef
+import qualified Data.Map as M
 import Haste
 import Haste.DOM
 import Haste.Graphics.Canvas
@@ -31,15 +32,16 @@ drawCurrent c0 c1 fs graph θ = do
     shiftPrevious c1 (fromIntegral dw)
     renderOnTop c1 . toOrigin . color green . fill $ circle (0,y) pointSize
 
-mainLoop :: Canvas -> Canvas -> Fourier -> IORef Angle -> IO ()
-mainLoop c0 c1 fs θref = do
+mainLoop :: Canvas -> Canvas -> IORef Fourier -> IORef Angle -> IO ()
+mainLoop c0 c1 fsRef θref = do
+    fs <- readIORef fsRef
     θ <- readIORef θref
     graph <- newIORef (stroke $ rect (0,0) (0,0))
     drawCurrent c0 c1 fs graph θ
     let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
-    setTimeout stepTime (mainLoop c0 c1 fs θref)
+    setTimeout stepTime (mainLoop c0 c1 fsRef θref)
 
 refresh :: Canvas -> IO ()
 refresh c = render c . stroke $ circle (0,0) 0
@@ -70,9 +72,28 @@ shiftPrevious = ffi . toJSString . unwords $
         "})"
         ]
 
+setFs :: IORef Fourier -> IO ()
+setFs fsRef = do
+    Just series <- elemById "series"
+    Just nth <- elemById "nth"
+    sName <- getProp series "value"
+    n <- read <$> getProp nth "value"
+    writeIORef fsRef . take n $ fouriers M.! sName
+
+setUp :: IORef Fourier -> IO ()
+setUp fsRef = do
+    Just series <- elemById "series"
+    Just nth <- elemById "nth"
+    setFs fsRef
+    _ <- onEvent series OnChange (setFs fsRef)
+    _ <- onEvent nth OnChange  (setFs fsRef)
+    return ()
+
 main = do
     print $ fourier
+    θref <- newIORef 1
+    fsRef <- newIORef []
+    setUp fsRef
     Just canv0 <- getCanvasById "canv0"
     Just canv1 <- getCanvasById "canv1"
-    θref <- newIORef 1
-    mainLoop canv0 canv1 (take 15 rectWave) θref
+    mainLoop canv0 canv1 fsRef θref
