@@ -17,7 +17,7 @@ drawCurrent c0 c1 fs graph θ = do
     refresh c0
     forM_ (zip [1..] (map (*radius) fs)) $ \ (n,a) -> do
         (nx,ny) <- readIORef p
-        let dx = a * cos (n*θ)
+        let dx = if even (floor (n+0.4) `div` 2) then -a * cos (n*θ) else a * cos (n*θ)
             dy = a * sin (n*θ)
         renderOnTop c0 . toCenter . stroke $ circle (nx,ny) (abs a)
         renderOnTop c0 . toCenter . color blue . stroke $ line (nx,ny) (nx+dx,ny+dy)
