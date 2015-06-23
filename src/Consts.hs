@@ -39,3 +39,6 @@ triangularWave = [
                  if even n
                      then 0
                      else 1/fromIntegral ((-1)^(n`div`2)*n^2) | n <- [1..]]
+
+sawToothWave :: Fourier
+sawToothWave = [1 / fromIntegral n | n <- [1..]]
