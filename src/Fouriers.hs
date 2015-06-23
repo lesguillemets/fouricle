@@ -21,11 +21,11 @@ leafy :: Fourier
 leafy = [imagPart ((0:+1)^(n-1)) / (fromIntegral n* log (fromIntegral n))
             | n <- [2..] :: [Int]]
 
-spiral :: Fourier
-spiral = [1 / (fromIntegral n*log(fromIntegral n)) | n <- [2..]::[Int]]
+wavy :: Fourier
+wavy = 0:[1 / (fromIntegral n*log(fromIntegral n)) | n <- [2..]::[Int]]
 
 play0 :: Fourier
-play0 = [ 0.2/ ((-1)^n *log (fromIntegral (n+1))) | n <- [1..] :: [Int]]
+play0 = 0:[ 0.2/ ((-1)^n *log (fromIntegral (n))) | n <- [2..] :: [Int]]
 
 play1 :: Fourier
 play1 = [if n `mod` 7 == 1
@@ -37,7 +37,7 @@ fouriers = M.fromList [
                       ("rectangular", rectWave),
                       ("triangular", triangularWave),
                       ("sawTooth", sawToothWave),
-                      ("spiral", spiral),
+                      ("wavy", wavy),
                       ("leafy", leafy),
                       ("play0", play0),
                       ("play1", play1)

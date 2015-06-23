@@ -24,7 +24,7 @@
           <option value="triangular">Triangular</option>
           <option value="sawTooth">SawTooth</option>
           <option value="leafy">leafy</option>
-          <option value="spiral">spiral</option>
+          <option value="wavy">wavy</option>
           <option value="play0">play0</option>
           <option value="play1">play1</option>
         </select>
@@ -35,6 +35,17 @@
         <input id="speed" type="number" min="0.001" step="0.1" value=1>
       </p>
     </div>
+  </div>
+  <div>
+    <ul>
+      <li>Rectangular : a<sub>n</sub> = 1/n if n is even else 0</li>
+      <li>Triangle : 1, 0, -1/9, 0, 1/25,... </li>
+      <li>sawTooth : 1/n</li>
+      <li>leafy : Im( i<sup>n</sup>) / ((n+1) log (n+1))</li>
+      <li>wavy : 1/ n log(n)</li>
+      <li>play0: (-1)<sup>n</sup> / log (n)</li>
+      <li>play1 :: 1 / n (when n = 7k+1) </li>
+    </ul>
   </div>
 </body>
 </html>
