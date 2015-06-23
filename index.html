@@ -11,9 +11,20 @@
     Written in haskell (code <a href="https://github.com/lesguillemets/fouricle">here</a>) and compiled with
     <a href="https://github.com/valderman/haste-compiler">Haste-compiler</a> (v.0.4.4).
   </p>
-  <div class="container">
+  <div class="container" id="canvContainer">
     <canvas id="canv0" width="1000" height="500"></canvas>
     <canvas id="canv1" width="1000" height="500"></canvas>
+  </div>
+  <div class="container">
+    <div class="options">
+      Display
+      <select id="series" name="series">
+        <option value="rectangular" selected="true">Rectangular</option>
+        <option value="triangular">Triangular</option>
+        <option value="sawTooth">SawTooth</option>
+      </select>
+      wave using first <input id="nth" type="number" min="1" step="1" value="15"> terms (upto the term a<sub>n</sub>sin(n&theta;)).
+    </div>
   </div>
 </body>
 </html>
