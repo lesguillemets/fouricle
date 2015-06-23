@@ -2,8 +2,8 @@ module Consts where
 import Haste.Graphics.Canvas
 import qualified Data.Map as M
 
-dθ :: Angle
-dθ = 0.02
+defaultdθ :: Angle
+defaultdθ = 0.02
 radius :: Double
 radius = 100
 width :: Int

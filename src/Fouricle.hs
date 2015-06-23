@@ -36,8 +36,8 @@ mainLoop c0 c1 dθref fsRef θref = do
     fs <- readIORef fsRef
     θ <- readIORef θref
     drawCurrent c0 c1 fs θ
-    dθ' <- readIORef dθref
-    let θ' = θ + dθ'
+    dθ <- readIORef dθref
+    let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
     setTimeout stepTime (mainLoop c0 c1 dθref fsRef θref)
@@ -84,16 +84,15 @@ setUp fsRef dθref = do
     _ <- onEvent series OnChange (setFs fsRef)
     _ <- onEvent nth OnChange  (setFs fsRef)
     Just speed <- elemById "speed"
-    newdθ <- (*dθ) . read <$> getProp speed "value"
     _ <- onEvent speed OnChange $ do
-        newdθ <- (*dθ) . read <$> getProp speed "value"
+        newdθ <- (*defaultdθ) . read <$> getProp speed "value"
         writeIORef dθref newdθ
     return ()
 
 main = do
     θref <- newIORef 1
     fsRef <- newIORef []
-    dθref <- newIORef dθ
+    dθref <- newIORef defaultdθ
     setUp fsRef dθref
     Just canv0 <- getCanvasById "canv0"
     Just canv1 <- getCanvasById "canv1"
