@@ -29,3 +29,13 @@ dw :: Int
 dw = 1
 pointSize :: Double
 pointSize = 1.0
+
+type Fourier = [Double]
+rectWave :: Fourier
+rectWave = [if even n then 0 else 1/fromIntegral n | n <- [1..]]
+
+triangularWave :: Fourier
+triangularWave = [
+                 if even n
+                     then 0
+                     else 1/fromIntegral ((-1)^(n`div`2)*n^2) | n <- [1..]]

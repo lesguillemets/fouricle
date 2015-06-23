@@ -8,7 +8,6 @@ import Haste.Foreign
 import Haste.Prim (toJSStr)
 
 import Consts
-type Fourier = [Double]
 
 drawCurrent :: Canvas -> Canvas ->
                 Fourier -> IORef (Picture ()) -> Angle -> IO ()
@@ -74,4 +73,4 @@ main = do
     Just canv0 <- getCanvasById "canv0"
     Just canv1 <- getCanvasById "canv1"
     θref <- newIORef 1
-    mainLoop canv0 canv1 fourier θref
+    mainLoop canv0 canv1 (take 15 rectWave) θref
