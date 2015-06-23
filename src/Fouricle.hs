@@ -6,13 +6,11 @@ import Haste
 import Haste.DOM
 import Haste.Graphics.Canvas
 import Haste.Foreign
-import Haste.Prim (toJSStr)
 
 import Consts
 
-drawCurrent :: Canvas -> Canvas ->
-                Fourier -> IORef (Picture ()) -> Angle -> IO ()
-drawCurrent c0 c1 fs graph θ = do
+drawCurrent :: Canvas -> Canvas -> Fourier -> Angle -> IO ()
+drawCurrent c0 c1 fs θ = do
     -- draw c0
     p <- newIORef ((0,0) :: Point)
     refresh c0
@@ -36,8 +34,7 @@ mainLoop :: Canvas -> Canvas -> IORef Fourier -> IORef Angle -> IO ()
 mainLoop c0 c1 fsRef θref = do
     fs <- readIORef fsRef
     θ <- readIORef θref
-    graph <- newIORef (stroke $ rect (0,0) (0,0))
-    drawCurrent c0 c1 fs graph θ
+    drawCurrent c0 c1 fs θ
     let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
@@ -46,14 +43,11 @@ mainLoop c0 c1 fsRef θref = do
 refresh :: Canvas -> IO ()
 refresh c = render c . stroke $ circle (0,0) 0
 
-fourier :: Fourier
-fourier = [if even n then 0 else 1/fromIntegral n | n <- [1..50]]
-
 centerPoint :: Point
 centerPoint = (fromIntegral $ width `div` 2 , fromIntegral $ height `div` 2)
-
 toCenter :: Picture () -> Picture ()
 toCenter = translate centerPoint
+
 graphOrigin :: Point
 graphOrigin = (fromIntegral barLength, fromIntegral $ height `div` 2)
 toOrigin :: Picture ()  -> Picture ()
@@ -90,7 +84,6 @@ setUp fsRef = do
     return ()
 
 main = do
-    print $ fourier
     θref <- newIORef 1
     fsRef <- newIORef []
     setUp fsRef
