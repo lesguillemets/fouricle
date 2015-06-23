@@ -1,8 +1,20 @@
-div.container{
-    display: block;
+div.options{
+    margin:10px 30px 0 0;
+}
+div#canvContainer{
+    position: relative;
+    width:1000px;
+    height:500px;
+    clear: both;
 }
 
 canvas {
+    width: 1000px;
+    height: 500px;
     border: 1px solid black;
     position: absolute;
+}
+
+#nth {
+    width:5em;
 }
