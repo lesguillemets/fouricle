@@ -4,6 +4,7 @@ import Data.IORef
 import qualified Data.Map as M
 import Haste
 import Haste.DOM
+import Haste.Events
 import Haste.Graphics.Canvas
 import Haste.Foreign
 
@@ -41,7 +42,8 @@ mainLoop c0 c1 dθref fsRef θref = do
     let θ' = θ + dθ
         nextθ = if θ' > 2*pi then θ' - 2*pi else θ'
     writeIORef θref nextθ
-    setTimeout stepTime (mainLoop c0 c1 dθref fsRef θref)
+    _ <- setTimer (Once stepTime) (mainLoop c0 c1 dθref fsRef θref)
+    return ()
 
 refresh :: Canvas -> IO ()
 refresh c = render c . stroke $ circle (0,0) 0
@@ -82,10 +84,10 @@ setUp fsRef dθref = do
     Just series <- elemById "series"
     Just nth <- elemById "nth"
     setFs fsRef
-    _ <- onEvent series OnChange (setFs fsRef)
-    _ <- onEvent nth OnChange  (setFs fsRef)
+    _ <- onEvent series Change $ \ _ -> setFs fsRef
+    _ <- onEvent nth Change $ \ _  -> setFs fsRef
     Just speed <- elemById "speed"
-    _ <- onEvent speed OnChange $ do
+    _ <- onEvent speed Change $ \ _ -> do
         newdθ <- (*defaultdθ) . read <$> getProp speed "value"
         writeIORef dθref newdθ
     return ()
